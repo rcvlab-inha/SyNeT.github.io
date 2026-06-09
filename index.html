@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SyNeT: Synthetic Negatives for Traversability Learning</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <!-- Local CSS (Bulma + icons) -->
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+
+  <!-- Small page-specific tweaks (safe even if index.css is missing) -->
+  <style>
+    :root { --maxw: 1200px; }
+    body { font-family: "Google Sans", "Noto Sans", sans-serif; }
+    .container.is-max-desktop { max-width: var(--maxw); }
+    .publication-title { line-height: 1.15; }
+    .author-block a { color: inherit; }
+    .section { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+    .teaser {  }
+    .figure-caption { font-size: 0.95rem; color: #555; margin-top: 0.6rem; }
+    .video-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 14px; box-shadow: 0 6px 22px rgba(0,0,0,0.08); }
+    .video-wrap iframe, .video-wrap video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    pre { white-space: pre-wrap; word-break: break-word; }
+    .pill { display:inline-block; padding: .25rem .6rem; border-radius: 999px; background: #f4f5f7; font-size: .85rem; margin: .15rem .2rem 0 0; }
+    a.button.is-disabled { pointer-events: none; opacity: 0.45; filter: grayscale(1); cursor: not-allowed; }
+  </style>
+</head>
+
+<body>
+
+<!-- ========================= HERO ========================= -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">SyNeT: Synthetic Negatives for Traversability Learning</h1>
+
+          <!-- Replace with your author list (links optional) -->
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Anonymous Authors</span>
+          </div>
+          <div class="is-size-6 publication-authors" style="margin-top:.35rem;">
+            <span class="author-block">RA-L (under review)</span>
+          </div>
+
+          <div class="column has-text-centered" style="margin-top:1.2rem;">
+            <div class="publication-links">
+              <!-- Paper (disabled but aligned) -->
+              <span class="link-block">
+                <a class="external-link button is-normal is-rounded is-dark is-disabled"
+                   href="javascript:void(0);" aria-disabled="true" tabindex="-1">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span>Paper (PDF)</span>
+                </a>
+              </span>
+
+              <!-- Code (SyNeT) -->
+              <span class="link-block">
+                <a href="https://anonymous.4open.science/r/SyNet-8B8D/README.md" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code (SyNeT pipeline)</span>
+                </a>
+              </span>
+
+              <!-- Code (Diffusion) -->
+              <span class="link-block">
+                <a href="https://anonymous.4open.science/r/Diffusion_pipeline_for_SyNeT-86DB/README.md" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code (Synthetic Negative Generation)</span>
+                </a>
+              </span>
+
+              <!-- Video anchor (scroll) -->
+              <span class="link-block">
+                <a href="#navigation" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-video"></i></span>
+                  <span>Navigation & Video</span>
+                </a>
+              </span>
+            </div>
+
+            <!-- Quick tags / highlights -->
+            <div style="margin-top:1rem;">
+              <span class="pill">Self-Supervised traversability</span>
+              <span class="pill">Generation Synthetic Negatives</span>
+              <span class="pill">PU + PN compatible</span>
+              <span class="pill">Object-centric FPR eval</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= ABSTRACT ========================= -->
+<section class="section" id="abstract">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Abstract</h2>
+
+    <div class="columns is-variable is-6 is-vcentered">
+      <!-- Left: Abstract text -->
+      <div class="column is-8">
+        
+        <div class="content has-text-justified">
+          <p>
+            Reliable traversability estimation is crucial for autonomous robots to navigate complex outdoor environments safely.
+            Existing self-supervised learning frameworks primarily rely on positive and unlabeled data; however, the lack of explicit
+            negative data remains a critical limitation, hindering the model’s ability to accurately identify diverse non-traversable regions.
+            To address this issue, we introduce a method to explicitly construct <em>synthetic negatives</em> and integrate them into
+            vision-based traversability learning as a <em>training strategy</em> that plugs into both Positive–Unlabeled (PU) and
+            Positive–Negative (PN) frameworks without modifying inference architectures. We also introduce an object-centric FPR evaluation
+            that measures errors specifically on the inserted negative regions, providing an annotation-free indicator of non-traversable recognition.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right: Abstract image -->
+      <div class="column is-4">
+        <figure class="image teaser">
+          <!-- 예: teaser / key idea / overview 일부 -->
+          <img src="./static/images/first_half.png" alt="SyNeT abstract overview">
+        </figure>
+        <p class="figure-caption has-text-centered">
+          Key idea of SyNeT: explicit synthetic negatives for traversability learning.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========================= OVERVIEW ========================= -->
+
+<!-- ========================= METHOD ========================= -->
+<section class="section" id="method">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Method</h2>
+
+    <div class="columns is-centered">
+      <div class="column is-12">
+        <figure class="image teaser">
+          <!-- Put your pipeline/diagram image here -->
+          <!-- Recommended: ./static/images/pipeline.png -->
+          <img src="./static/images/dif_pipeline.png" alt="SyNeT method pipeline (replace this file)">
+        </figure>
+        <p class="figure-caption">
+          Synthetic Negative Generation Module
+        </p>
+      </div>
+    </div>
+
+    <div class="columns is-centered">
+      <div class="column is-12">
+        <figure class="image teaser">
+          <!-- Put your pipeline/diagram image here -->
+          <!-- Recommended: ./static/images/pipeline.png -->
+          <img src="./static/images/overview_sum_new.png" alt="SyNeT method pipeline (replace this file)">
+        </figure>
+        <p class="figure-caption">
+          SyNeT integrated into PU and PN baselines: synthetic negatives provide explicit non-traversable features that enforce clearer separation in the embedding space.
+        </p>
+      </div>
+    </div>
+
+    <div class="columns is-variable is-6">
+      <div class="column">
+        <h3 class="title is-5">1) Synthetic Negative Generation</h3>
+        <div class="content">
+          <ul>
+            <li><strong>Region selection</strong>: sample ROI and target size inside the ground area.</li>
+            <li><strong>Inpainting</strong>: generate scene-consistent negatives with diffusion inpainting (e.g., Stable Diffusion 3.5 / FLUX.1 Fill).</li>
+            <li><strong>Segmentation & filtering</strong>: segment the generated object and apply scene filters (object count, pixel area); resample if violated.</li>
+            <li><strong>Composition</strong>: blend the approved negative into the base image to obtain a composite and a pixel-wise negative mask.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="column">
+        <h3 class="title is-5">2) Training Strategy (Plug-in)</h3>
+        <div class="content">
+          <ul>
+            <li><strong>PU (LORT)</strong>: add a negative-center assignment loss for synthetic negatives + unlabeled features, plus a repulsion loss to avoid center collapse.</li>
+            <li><strong>PN (V-STRONG)</strong>: add a contrastive loss term that treats synthetic negatives as reliable negative anchors.</li>
+            <li><strong>No inference change</strong>: SyNeT modifies only training objectives; at test time, you run the original model and produce a similarity map.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    
+  </div>
+</section>
+  
+<!-- ========================= OUR DATASET ========================= -->
+<section class="section" id="our-dataset">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Our Dataset</h2>
+
+    <div class="columns is-variable is-6 is-vcentered">
+      <div class="column is-5">
+        <figure class="image teaser has-text-centered">
+          <img src="./static/images/dataset.png"
+               alt="Overview of the RUOS dataset"
+               style="width: 90%; height: auto; display: inline-block;">
+        </figure>
+      </div>
+      <div class="column is-7">
+        <p class="content has-text-justified">
+          Overview of the RUOS dataset. The driving trajectories are visualized across three distinct scenarios: Campus, Convention Center, and Public Park. Each color corresponds to a recording sequence, highlighting the diversity of the collected paths.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+  
+<!-- ========================= DIFFUSION PROMPT ==========================-->
+<section class="section" id="diffusion-prompt">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Diffusion Generation Prompt</h2>
+
+    <div class="columns is-variable is-6 is-vcentered">
+      <!-- Left: Abstract text -->
+      <div class="column is-12">
+        
+        <div class="content has-text-justified">
+          <p>
+             To generate diverse appearances of the same object across different environments, we used a generation prompt that specified only the minimum requirements (style: realistic; location: on the ground), leaving the remaining details to be determined by the model.
+             In the case of complex creatures, we added more constraints (e.g., full body, 2 legs, 2 ears) to ensure more complete generations.
+          </p>
+        </div>
+        <h3 class="title is-5"> Prompt </h3>
+        <div class="content">
+          <ul>
+            <li><strong>bicycle</strong>: a realistic bicycle lying on the ground</li>
+            <li><strong>box</strong>: a realistic package box on the ground</li>
+            <li><strong>dog</strong>: a realistic dog with full body, 4 legs</li>
+            <li><strong>people</strong>: a realistic person, full body, 2 eyes, 1 nose, 2 ears, 1 mouth, solo</li>
+            <li><strong>trash</strong>: a pile of garbage on the ground</li>
+            <li><strong>rock</strong>: Add a realistic big rock on the ground</li>
+            <li><strong>tree log</strong>: Add a realistic tree log lying on the ground</li>
+            <li><strong>sky</strong>: Add a realistic sky</li>
+            <li><strong>building</strong>: Add a realistic building</li>
+          </ul>
+        </div>
+        <div class="columns is-centered">
+          <div class="column is-12">
+            <figure class="image teaser">
+              <img src="./static/images/dif_prompt.png" alt="">
+            </figure>
+          </div>
+        </div>
+
+        <!-- <h3 class="title is-5">Image Samples (people)</h3>
+        <div class="content has-text-justified">
+          <p>
+            Twenty images were randomly sampled from the train and test datasets used in the actual training of our pipeline. The yellow dashed boxes indicate the masks used for generation.
+          </p>
+        </div> -->
+        <!--
+        <div class="columns is-variable is-6">
+          <div class="column is-6">
+            <h4 class="title is-6 has-text-centered">Train</h4>
+            <figure class="image teaser">
+              <img src="./static/images/Train_image_set.png" alt="Train image set examples">
+            </figure>
+          </div>
+            
+
+          <div class="column is-6">
+            <h4 class="title is-6 has-text-centered">Test</h4>
+            <figure class="image teaser">
+              <img src="./static/images/Test_image_set.png" alt="Test image set examples">
+            </figure>
+          </div>
+        </div>
+        -->
+      </div>
+    </div>
+  </div>
+</section>
+  
+<!-- ========================= QUALITATIVE RESULTS ========================= -->
+
+<section class="section" id="results">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Qualitative Results</h2>
+    <div class="content">
+      <p>
+        Below are example traversability maps across diverse environments (social, indoor, off-road, and urban).
+      </p>
+    </div>
+
+    <!-- A responsive grid (2 columns on desktop, 1 on mobile) -->
+    <div class="columns is-multiline">
+      <div class="column is-12">
+        <figure class="image teaser">
+          <img src="./static/images/fig_sum_new.png" alt="Qualitative result 1 (replace this file)">
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= ADDITIONAL ABLATION STUDY ========================= -->
+<section class="section" id="ablation">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Additional Ablation Study</h2>
+    <div class="content has-text-justified">
+      <p>
+        We provide additional ablation results to compare simple copy-paste augmentation and diffusion-based synthetic insertion, and to study the effect of hyper-parameters
+        <em>&lambda;<sub>neg</sub></em>, <em>&lambda;<sub>rep</sub></em>, and <em>&lambda;<sub>n</sub></em> in SyNeT.
+        Table A compares diffusion-based synthetic insertion with simple copy-paste augmentation, and Table B presents the effect of <em>&lambda;<sub>neg</sub></em>, <em>&lambda;<sub>rep</sub></em>, and <em>&lambda;<sub>n</sub></em>.
+      </p>
+
+    </div>
+    <div class="columns is-multiline">
+      <div class="column is-12">
+        <figure class="image teaser has-text-centered">
+          <img src="./static/images/Table_A.png"
+               alt="Table A"
+               style="width: 90%; height: auto; display: inline-block;">
+        </figure>
+        <p class="figure-caption has-text-centered">
+          Table A: Comparison between synthetic and simple copy-paste augmentation insertion. Evaluation on RELLIS-3D.
+        </p>
+      </div>
+
+      <div class="column is-12">
+        <figure class="image teaser has-text-centered">
+          <img src="./static/images/Table_B.png"
+               alt="Table B"
+               style="width: 65%; height: auto; display: inline-block;">
+        </figure>
+        <p class="figure-caption has-text-centered">
+          Table B: Ablation study on the balancing weights of λ<sub>neg</sub>, λ<sub>rep</sub> and λ<sub>n</sub>.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= Navigation ========================= -->
+<!-- <section class="section" id="navigation">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Navigation</h2>
+    <p>
+      Navigation results using a DWA-based planner. The predicted similarity map is converted into a traversability-aware cost map and used for real-time robot navigation.
+    </p>
+
+    <div class="video-wrap" style="margin-bottom:1.25rem;">
+      <iframe
+        src="https://www.youtube.com/embed/inNyuyOGTes"
+        title="SyNeT navigation results using a DWA-based planner"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </div>
+</section> -->
+<section class="section" id="navigation">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Navigation</h2>
+    <p style="margin-bottom:1.25rem;">
+      Navigation results using a DWA-based planner. The predicted similarity map is converted into a traversability-aware cost map and used for real-time robot navigation.
+    </p>
+
+    <div class="columns is-variable is-4 is-centered">
+      <!-- Video 1 -->
+      <div class="column is-one-third">
+        <div class="video-wrap">
+          <iframe
+            src="https://www.youtube.com/embed/E7viVG3RE9A"
+            title="Navigation results in Campus"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <p class="figure-caption has-text-centered">Campus</p>
+      </div>
+
+      <!-- Video 2 -->
+      <div class="column is-one-third">
+        <div class="video-wrap">
+          <iframe
+            src="https://www.youtube.com/embed/Vjhmte7sNVc"
+            title="Navigation results in Offroad"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <p class="figure-caption has-text-centered">Offroad</p>
+      </div>
+
+      <!-- Video 3 -->
+      <div class="column is-one-third">
+        <div class="video-wrap">
+          <iframe
+            src="https://www.youtube.com/embed/D0C5sy0vUM0"
+            title="Navigation results in Park"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <p class="figure-caption has-text-centered">Park</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Navigation Trial Results -->
+<section class="section" id="navigation-results">
+  <div class="container is-max-desktop">
+
+    <div style="margin-top: 0;">
+      <h3 class="title is-4">Navigation Trial Results</h3>
+
+      <p class="content has-text-justified">
+        Each table reports the first event observed during navigation. SyNeT improves safety by either delaying collision to later negatives or producing a safe stop instead of collision.
+      </p>
+
+      <!-- Campus -->
+      <h4 class="title is-5" style="margin-top: 1.5rem;">Campus</h4>
+      <p class="content">Navigation outcomes in the Campus scenario.</p>
+
+      <div class="table-container">
+        <table class="table is-bordered is-striped is-hoverable is-fullwidth has-text-centered">
+          <thead>
+            <tr>
+              <th>Trial</th>
+              <th>LORT</th>
+              <th>SyNeT+LORT</th>
+              <th>VS</th>
+              <th>SyNeT+VS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 2)</td><td>Collide (Neg. 5)</td><td><strong>Complete</strong></td></tr>
+            <tr><td>2</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 2)</td><td>Collide (Neg. 4)</td><td><strong>Safe Stop (Neg. 5)</strong></td></tr>
+            <tr><td>3</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 2)</td><td>Collide (Neg. 5)</td><td><strong>Complete</strong></td></tr>
+            <tr><td>4</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 2)</td><td>Collide (Neg. 4)</td><td><strong>Complete</strong></td></tr>
+            <tr><td>5</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 2)</td><td>Collide (Neg. 5)</td><td><strong>Complete</strong></td></tr>
+            <tr><td>6</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 2)</td><td>Collide (Neg. 5)</td><td><strong>Complete</strong></td></tr>
+            <tr><td>7</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 2)</td><td>Collide (Neg. 5)</td><td><strong>Complete</strong></td></tr>
+            <tr><td>8</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 2)</td><td>Collide (Neg. 3)</td><td><strong>Safe Stop (Neg. 5)</strong></td></tr>
+            <tr><td>9</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 2)</td><td>Collide (Neg. 5)</td><td><strong>Complete</strong></td></tr>
+            <tr><td>10</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 2)</td><td>Collide (Neg. 3)</td><td><strong>Safe Stop (Neg. 5)</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="figure-caption">
+        <strong>Complete</strong>: successful navigation without collision.
+        <strong>Collide (Neg. k)</strong>: collision with the k-th negative.
+        <strong>Safe Stop (Neg. k)</strong>: the planner safely stops before the k-th negative by recognizing it as non-traversable.
+      </p>
+
+      <!-- Offroad -->
+      <h4 class="title is-5" style="margin-top: 2.5rem;">Offroad</h4>
+      <p class="content">Navigation outcomes in the Offroad scenario.</p>
+
+      <div class="table-container">
+        <table class="table is-bordered is-striped is-hoverable is-fullwidth has-text-centered">
+          <thead>
+            <tr>
+              <th>Trial</th>
+              <th>LORT</th>
+              <th>SyNeT+LORT</th>
+              <th>VS</th>
+              <th>SyNeT+VS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 4)</td><td>Collide (Neg. 1)</td><td><strong>Complete</strong></td></tr>
+            <tr><td>2</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 2)</td><td>Collide (Neg. 2)</td><td><strong>Complete</strong></td></tr>
+            <tr><td>3</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 3)</td><td>Collide (Neg. 2)</td><td><strong>Complete</strong></td></tr>
+            <tr><td>4</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 3)</td><td>Collide (Neg. 1)</td><td><strong>Complete</strong></td></tr>
+            <tr><td>5</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 3)</td><td>Collide (Neg. 2)</td><td><strong>Complete</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="figure-caption">
+        <strong>Complete</strong>: successful navigation without collision.
+        <strong>Collide (Neg. k)</strong>: collision with the k-th negative.
+        <strong>Safe Stop (Neg. k)</strong>: the planner safely stops before the k-th negative by recognizing it as non-traversable.
+      </p>
+
+      <!-- Park -->
+      <h4 class="title is-5" style="margin-top: 2.5rem;">Park</h4>
+      <p class="content">Navigation outcomes in the Park scenario.</p>
+
+      <div class="table-container">
+        <table class="table is-bordered is-striped is-hoverable is-fullwidth has-text-centered">
+          <thead>
+            <tr>
+              <th>Trial</th>
+              <th>LORT</th>
+              <th>SyNeT+LORT</th>
+              <th>VS</th>
+              <th>SyNeT+VS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Collide (Neg. 1)</td><td><strong>Safe Stop (Neg. 3)</strong></td><td>Collide (Neg. 1)</td><td><strong>Complete</strong></td></tr>
+            <tr><td>2</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 3)</td><td>Collide (Neg. 1)</td><td><strong>Complete</strong></td></tr>
+            <tr><td>3</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 3)</td><td>Collide (Neg. 1)</td><td><strong>Complete</strong></td></tr>
+            <tr><td>4</td><td>Collide (Neg. 1)</td><td><strong>Safe Stop (Neg. 3)</strong></td><td>Collide (Neg. 1)</td><td><strong>Complete</strong></td></tr>
+            <tr><td>5</td><td>Collide (Neg. 1)</td><td>Collide (Neg. 3)</td><td>Collide (Neg. 1)</td><td><strong>Complete</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="figure-caption">
+        <strong>Complete</strong>: successful navigation without collision.
+        <strong>Collide (Neg. k)</strong>: collision with the k-th negative.
+        <strong>Safe Stop (Neg. k)</strong>: the planner safely stops before the k-th negative by recognizing it as non-traversable.
+      </p>
+    </div>
+
+  </div>
+</section>
+<!-- ========================= VIDEO ========================= -->
+<section class="section" id="video">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Video</h2>
+
+    <div class="columns is-variable is-4 is-centered">
+      <!-- Video 1 -->
+      <div class="column is-half">
+        <div class="video-wrap">
+          <iframe
+            src="https://www.youtube.com/embed/sR4DLGYOKS4"
+            title="SyNeT qualitative results"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <p class="figure-caption has-text-centered">
+          Qualitative results on SCAND, RELLIS-3D, and RUOS.
+        </p>
+      </div>
+
+      <!-- Video 2 -->
+      <div class="column is-half">
+        <div class="video-wrap">
+          <iframe
+            src="https://www.youtube.com/embed/s1KwukqGrLI"
+            title="SyNeT qualitative results on RELLIS-3D"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <p class="figure-caption has-text-centered">
+          Qualitative results on RELLIS-3D with additional negative data.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========================= CITATION ========================= -->
+<section class="section" id="citation">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Citation</h2>
+    <div class="content">
+      <p>If you find this useful, please cite:</p>
+      <pre>
+        ------
+      </pre>
+      <p class="help">
+        Update the BibTeX fields once the author list / venue / year are final.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- <footer class="footer">
+  <div class="container is-max-desktop">
+    <div class="content has-text-centered">
+      <p style="opacity:.7;">
+        Template inspired by academic project pages (Bulma + FontAwesome).
+      </p>
+    </div>
+  </div>
+</footer> -->
+
+</body>
+</html>
